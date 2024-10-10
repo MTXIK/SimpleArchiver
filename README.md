@@ -4,7 +4,7 @@ A command-line tool for archiving and unarchiving files and directories using RL
 
 # Building
 
-for macOS/Linux run `gcc ./src/archiver.c -o archiver`
+for macOS/Linux run `gcc ./src/archiver.c -o ./src/archiver`
 
 # Running
 
