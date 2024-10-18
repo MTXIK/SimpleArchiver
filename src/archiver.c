@@ -8,6 +8,7 @@
 #include <errno.h>       // Библиотека для обработки ошибок
 #include <limits.h>      // Библиотека для определения размеров числовых типов
 #include <pwd.h>     // Для работы с пользовательской информацией (для Linux)
+#include <libgen.h>  // Для работы с путями к файлам
 
 #define BUFFER_SIZE 1024        // Определяем размер буфера для чтения и записи данных
 #define FILE_ENTRY 0x01         // Константа, указывающая на запись типа "файл" в архиве
@@ -201,7 +202,7 @@ void pack_directory(FILE *archive, const char *base_path, const char *relative_p
 
 // Архивирование файлов и директорий
 void pack(const char *input_path, char *archive_path) {
-    // Добавляем расширение .sa, если оно отсутствует
+    // Add the .sa extension if it's missing
     add_extension_if_missing(archive_path, ARCHIVE_EXTENSION);
 
     FILE *archive = fopen(archive_path, "wb");
@@ -210,12 +211,25 @@ void pack(const char *input_path, char *archive_path) {
         return;
     }
 
-    char base_path[PATH_MAX];
-    realpath(input_path, base_path);
-    pack_directory(archive, base_path, ".");
+    // Get the real path of the input and its parent directory
+    char *input_realpath = realpath(input_path, NULL);
+    if (!input_realpath) {
+        perror("realpath");
+        fclose(archive);
+        return;
+    }
 
+    char *input_dirname = strdup(input_realpath);
+    char *input_basename = strdup(input_realpath);
+    input_dirname = dirname(input_dirname);
+    input_basename = basename(input_basename);
+
+    pack_directory(archive, input_dirname, input_basename);
+
+    free(input_realpath);
     fclose(archive);
 }
+
 
 
 // Разархивация архивов в директории
