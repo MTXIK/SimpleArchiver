@@ -4,8 +4,8 @@ A command-line tool for archiving and unarchiving files and directories using RL
 
 # Building
 
-for macOS/Linux run `gcc ./src/archiver.c -o ./src/archiver`
+for macOS/Linux run `make`
 
 # Running
 
-Execute the compiled binary in a directory `./src/archiver`
+Execute the compiled binary in a directory `./archiver`
